@@ -37,6 +37,7 @@ namespace nss.Data
             {
                 List<Cohort> cohorts = db.Query<Cohort>
                     ("SELECT Id FROM Cohort").ToList();
+                    Console.WriteLine(cohorts);
             }
             catch (System.Exception ex)
             {
@@ -64,6 +65,47 @@ namespace nss.Data
 
                     db.Execute(@"INSERT INTO Cohort
                         VALUES (null, 'Day Cohort 21')");
+
+                }
+            }
+        }
+// CREATING OF EXERCISE TABLE AND SEEDING
+        public static void CheckExerciseTable()
+        {
+            SqliteConnection db = DatabaseInterface.Connection;
+
+            try
+            {
+                List<Exercise> exercises = db.Query<Exercise>
+                    ("SELECT Id FROM Exercise").ToList();
+            }
+            catch (System.Exception ex)
+            {
+                if (ex.Message.Contains("no such table"))
+                {
+                    db.Execute(@"CREATE TABLE Exercise (
+                        `Id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        `Name`	    TEXT NOT NULL, 
+                        `Language`  TEXT NOT NULL
+                    )");
+
+                    db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'ChickenMonkey', 'JavaScript')");
+
+                    db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'BattleBands', 'JavaScript')");
+
+                    db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'Kennel', 'React')");
+
+                    db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'MusicHistory', 'SQL')");
+
+                    db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'NutShell', 'JavaScript')");
+
+                    db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'ReactiveNutshell', 'React')");
 
                 }
             }
@@ -118,6 +160,58 @@ namespace nss.Data
                               'David',
                               '@jisie',
                               'Student success',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 21'
+                    ");
+                }
+            }
+        }
+// CREATING OF STUDENT TABLE AND SEEDING WITH SUB-SELECTS
+        public static void CheckStudentTable()
+        {
+            SqliteConnection db = DatabaseInterface.Connection;
+
+            try
+            {
+                List<Student> students = db.Query<Student>
+                    ("SELECT Id FROM Student").ToList();
+            }
+            catch (System.Exception ex)
+            {
+                if (ex.Message.Contains("no such table"))
+                {
+                    db.Execute($@"CREATE TABLE Student (
+                        `Id`	integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        `FirstName`	varchar(80) NOT NULL,
+                        `LastName`	varchar(80) NOT NULL,
+                        `SlackHandle`	varchar(80) NOT NULL,
+                        `CohortId`	integer NOT NULL,
+                        FOREIGN KEY(`CohortId`) REFERENCES `Cohort`(`Id`)
+                    )");
+
+                    db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Lauren',
+                              'Richert',
+                              '@lrichert',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 13'
+                    ");
+
+                    db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Carmen',
+                              'Boyd',
+                              '@cboyd',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Evening Cohort 1'
+                    ");
+
+                    db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Sam',
+                              'Jones',
+                              '@sjones',
                               c.Id
                         FROM Cohort c WHERE c.Name = 'Day Cohort 21'
                     ");

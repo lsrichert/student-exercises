@@ -22,6 +22,9 @@ namespace nss
             SqliteConnection db = DatabaseInterface.Connection;
             DatabaseInterface.CheckCohortTable();
             DatabaseInterface.CheckInstructorsTable();
+            // HERE I'M CALLING THE FUNCTIONS I CREATED IN DATABASEINTERFACE.CS TO ADD TABLES FOR EXERCISE AND STUDENT
+            DatabaseInterface.CheckExerciseTable();
+            DatabaseInterface.CheckStudentTable();
 
             List<Instructor> instructors = db.Query<Instructor>(@"SELECT * FROM Instructor").ToList();
             instructors.ForEach(i => Console.WriteLine($"{i.FirstName} {i.LastName}"));

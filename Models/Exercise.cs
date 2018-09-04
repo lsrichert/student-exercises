@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Data.Sqlite;
 
 namespace nss.Data
 {
@@ -8,6 +9,7 @@ namespace nss.Data
         public string Name { get; set; }
         public string Language { get; set; }
         public List<Student> AssignedStudents { get; set; }
+
     }
 
 }
