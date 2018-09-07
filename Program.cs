@@ -25,6 +25,7 @@ namespace nss
             // HERE I'M CALLING THE FUNCTIONS I CREATED IN DATABASEINTERFACE.CS TO ADD TABLES FOR EXERCISE AND STUDENT
             DatabaseInterface.CheckExerciseTable();
             DatabaseInterface.CheckStudentTable();
+            DatabaseInterface.CheckStudentExerciseTable();
 
             List<Instructor> instructors = db.Query<Instructor>(@"SELECT * FROM Instructor").ToList();
             instructors.ForEach(i => Console.WriteLine($"{i.FirstName} {i.LastName}"));
@@ -67,8 +68,41 @@ namespace nss
             .ToList()
             .ForEach(i => Console.WriteLine($"{i.FirstName} {i.LastName} ({i.SlackHandle}) is coaching {i.Cohort.Name}"));
 
+            // 4. List the instructors and students assigned to each cohort
 
-
+            db.Query<Student, Cohort, Student>(@"
+            SELECT  s.CohortId,
+                    s.FirstName,
+                    s.LastName,
+                    c.Id,
+                    c.Name
+                FROM Student s
+                JOIN Cohort c ON c.Id = s.CohortId
+                 ", (student, cohort) =>
+                 {
+                    student.Cohort = cohort;
+                    return student;
+                    })
+                    .ToList()
+                    .ForEach(s => Console.WriteLine($"{s.FirstName} {s.LastName} is in {s.Cohort.Name}"));
+        
+            db.Query<Student, Instructor, Student>(@"
+            SELECT  s.CohortId,
+                    s.FirstName
+                    s.LastName
+                    i.CohortId
+                    i.FirstName
+                    i.LastName
+            FROM Student s
+            JOIN Cohort c ON s.CohortId = c.Id
+            JOIN Cohort c ON i.CohortId = c.Id
+            ", (student, instructor) =>
+            {
+                student.Cohort = cohort;
+                
+            })
+            .ToList()
+            // .ForEach(s => Console.WriteLine($"{s.FirstName} {s.LastName} and {i.FirstName} {i.LastName} are in {c.Name}"))
 
             /*
                 Querying the database in the opposite direction is noticeably more
